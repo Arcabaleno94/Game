@@ -8,6 +8,8 @@ public class Obstacle : MonoBehaviour
 {
     public Text amountText;
 
+    public AudioClip impactSound;
+
     private int amount;
 
     private Material ñhange;
@@ -24,13 +26,13 @@ public class Obstacle : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
+    
     void Start()
     {
-        SetAmpunt();
+        
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         if(player != null && nextTime < Time.time)
@@ -38,7 +40,7 @@ public class Obstacle : MonoBehaviour
             PlayerDamage();
         }
     }
-    public void SetAmpunt()
+    public void SetAmount()
     {
         gameObject.SetActive(true);
         amount = Random.Range(0, LevelController.instance.obstaclesAmount);
@@ -61,7 +63,7 @@ public class Obstacle : MonoBehaviour
         int playerLives = FindObjectOfType<Player>().transform.childCount;
         Color newColor;
 
-        if(amount >= playerLives)
+        if(amount > playerLives)
         {
             newColor = LevelController.instance.hardColor;
         }
@@ -80,7 +82,12 @@ public class Obstacle : MonoBehaviour
 
     void PlayerDamage()
     {
+        if (LevelController.instance.gameOver)
+            return;
+
+        AudioSource.PlayClipAtPoint(impactSound, Camera.main.transform.position);
         nextTime = Time.time + LevelController.instance.damageTime;
+        player.TakeDamage();
         amount--;
         SetAmountText();
         if(amount <= 0)

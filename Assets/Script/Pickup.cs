@@ -9,6 +9,8 @@ public class Pickup : MonoBehaviour
     public Text amountText;
     public GameObject PlayerPrefab;
 
+    public AudioClip pickupSound;
+
     public int amount;
 
     private void OnEnable()
@@ -21,6 +23,8 @@ public class Pickup : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            AudioSource.PlayClipAtPoint(pickupSound, Camera.main.transform.position);
+
             for (int i = 0; i < amount; i++)
             {
                 int index = collision.transform.childCount;
@@ -34,8 +38,15 @@ public class Pickup : MonoBehaviour
                 }
             }
 
-            
+           Player player = collision.GetComponent<Player>();
+            if(player != null)
+            {
+                player.SetText(player.transform.childCount);
+            }
 
+            
         }
+
+        gameObject.SetActive(false);
     }
 }
